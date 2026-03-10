@@ -1,0 +1,31 @@
+services:
+  db:
+    image: postgres:15.1-bullseye
+    environment:
+      - POSTGRES_USER=${LIB_POSTGRES_USER}
+      - POSTGRES_PASSWORD=${LIB_POSTGRES_PWD}
+      - POSTGRES_DB=${LIB_POSTGRES_DATABASE}
+      - POSTGRES_PORT=${LIB_POSTGRES_PORT}
+    volumes:
+      - lib_postgres_data:/var/lib/postgresql/data/
+    ports:
+      - "${LIB_POSTGRES_PORT}:${LIB_POSTGRES_PORT}"
+    expose:
+      - ${LIB_POSTGRES_PORT}
+    healthcheck:
+      test:
+        [
+          "CMD",
+          "pg_isready",
+          "-q",
+          "-d",
+          "${LIB_POSTGRES_DATABASE}",
+          "-U",
+          "${LIB_POSTGRES_USER}",
+        ]
+      timeout: 40s
+      interval: 2s
+      retries: 20
+
+volumes:
+  lib_postgres_data:
